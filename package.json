@@ -1,0 +1,13 @@
+{
+  "name": "Onestic2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "neat-csv": "^5.2.0"
+  }
+}
