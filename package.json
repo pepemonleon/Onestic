@@ -1,13 +1,14 @@
 {
-  "name": "Onestic2",
+  "name": "onestic",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": "Jose Monleón López",
   "license": "ISC",
   "dependencies": {
+    "csv-writer": "^1.6.0",
     "neat-csv": "^5.2.0"
   }
 }
