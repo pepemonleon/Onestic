@@ -65,10 +65,9 @@ async function task1() {
     await writeCsvTask1(result)
 }
 
-
 async function writeCsvTask1(result) {
     const csvWriter = createCsvWriter({
-        path: 'order_prices.csv',
+        path: 'data/order_prices.csv',
         header: [
             {id: 'id', title: 'ORDER ID'},
             {id: 'euros', title: 'EUROS'}
@@ -80,5 +79,48 @@ async function writeCsvTask1(result) {
     console.log(result)
 }
 
+async function task2() {
+    let products = await parseProducts()    //Save data products
+    let orders = await parseOrders()        //Save data orders
+
+    let result = []
+
+    products.forEach(product => {
+        let customersIds = new Set()
+
+        orders.forEach(order => {
+            let productsIds = order.products.split(" ")     //Separate products id
+
+            if (product.id in productsIds) {
+                customersIds.add(parseInt(order.customer))
+            }
+        })
+
+        let ids = Array.from(customersIds).sort(function (a, b) {
+            return a - b
+        });
+
+        result.push({"id": product.id, "customer_ids": ids.join(' ')})
+    })
+
+    await writeCsvTask2(result)
+}
+
+
+async function writeCsvTask2(result) {
+    const csvWriter = createCsvWriter({
+        path: 'data/product_customers.csv',
+        header: [
+            {id: 'id', title: 'PRODUCT ID'},
+            {id: 'customer_ids', title: 'CUSTOMER IDS'}
+        ]
+    });
+
+    await csvWriter.writeRecords(result)
+
+    console.log(result)
+}
+
 task1()
+task2()
 
