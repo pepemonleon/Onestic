@@ -192,3 +192,4 @@ fabric.properties
 # CSV
 data/order_prices.csv
 data/product_customers.csv
+data/customer_ranking.csv

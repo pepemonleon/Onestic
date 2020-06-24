@@ -41,10 +41,9 @@ function getProductById(productId, products) {
     return product
 }
 
-//Task 1 - Merge orders and total of prices
-async function task1() {
-    let products = await parseProducts()    //Save data products
+async function getOrdersTotal() {
     let orders = await parseOrders()        //Save data orders
+    let products = await parseProducts()    //Save data products
 
     let result = []
 
@@ -59,12 +58,20 @@ async function task1() {
             }
         })
 
-        result.push({"id": order.id, "euros": total})
+        result.push({"id": order.id, "customer": order.customer, "euros": total})   //Get from order,cs id, customers and total euros
     })
+
+    return result
+}
+
+//Task 1
+async function task1() {
+    let result = await getOrdersTotal()
 
     await writeCsvTask1(result)
 }
 
+//Create the csv file for Task 1
 async function writeCsvTask1(result) {
     const csvWriter = createCsvWriter({
         path: 'data/order_prices.csv',
@@ -75,10 +82,9 @@ async function writeCsvTask1(result) {
     });
 
     await csvWriter.writeRecords(result)
-
-    console.log(result)
 }
 
+//Task 2
 async function task2() {
     let products = await parseProducts()    //Save data products
     let orders = await parseOrders()        //Save data orders
@@ -92,11 +98,11 @@ async function task2() {
             let productsIds = order.products.split(" ")     //Separate products id
 
             if (product.id in productsIds) {
-                customersIds.add(parseInt(order.customer))
+                customersIds.add(parseInt(order.customer))  //Convert customersId (string) to int
             }
         })
 
-        let ids = Array.from(customersIds).sort(function (a, b) {
+        let ids = Array.from(customersIds).sort(function (a, b) { //Sort customers_ids from least to greatest
             return a - b
         });
 
@@ -106,7 +112,7 @@ async function task2() {
     await writeCsvTask2(result)
 }
 
-
+//Create the csv file for Task 2
 async function writeCsvTask2(result) {
     const csvWriter = createCsvWriter({
         path: 'data/product_customers.csv',
@@ -117,10 +123,51 @@ async function writeCsvTask2(result) {
     });
 
     await csvWriter.writeRecords(result)
-
-    console.log(result)
 }
 
-task1()
-task2()
+//Task 3
+async function task3() {
+    let customers = await parseCustomers()  //Save data customers
+    let ordersTotal = await getOrdersTotal()    //Get from order.cs id, customers and total euros
 
+    let result = []
+    customers.forEach(customer => {
+        let total = 0
+        ordersTotal.forEach(order => {
+            if (customer.id == order.customer) {
+                total += order.euros
+            }
+        })
+        result.push({
+            "id": customer.id,
+            "firstname": customer.firstname,
+            "lastname": customer.lastname,
+            "total_euros": total
+        })
+    })
+
+    result = result.sort(function (a, b) {  //Sort total_euros from highest to lowest
+        return b.total_euros - a.total_euros
+    });
+
+    await writeCsvTask3(result)
+}
+
+//Create the csv file for Task 3
+async function writeCsvTask3(result) {
+    const csvWriter = createCsvWriter({
+        path: 'data/customer_ranking.csv',
+        header: [
+            {id: 'id', title: 'PRODUCT ID'},
+            {id: 'firstname', title: 'FIRSTNAME'},
+            {id: 'lastname', title: 'LASTNAME'},
+            {id: 'total_euros', title: 'TOTAL EUROS'}
+        ]
+    });
+
+    await csvWriter.writeRecords(result)
+}
+
+task1();
+task2();
+task3();
